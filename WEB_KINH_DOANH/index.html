@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trang chủ | Quản lý bán hàng</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Menu sẽ load tự động -->
+  <div id="menu"></div>
+
+  <main class="main-content">
+    <h1>Xin chào 👋</h1>
+    <p>Chào mừng bạn đến hệ thống quản lý bán hàng.</p>
+
+    <section class="dashboard">
+      <div class="card">Sản phẩm: <span id="countSanPham">0</span></div>
+      <div class="card">Chương trình: <span id="countChuongTrinh">0</span></div>
+      <div class="card">Đơn hàng: <span id="countDonHang">0</span></div>
+    </section>
+  </main>
+
+  <script type="module" src="js/menu.js"></script>
+  <script type="module" src="js/firebaseConfig.js"></script>
+  <script type="module" src="js/index.js"></script>
+</body>
+</html>
