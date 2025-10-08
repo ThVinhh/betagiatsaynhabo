@@ -1,47 +1,97 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <title>Quản lý đơn hàng</title>
+  <meta charset="utf-8" />
+  <title>POS — Tạo đơn hàng</title>
   <link rel="stylesheet" href="css/style.css" />
-  <script type="module" src="js/donhang.js"></script>
-  <script type="module" src="js/menu.js"></script>
+  <link rel="stylesheet" href="css/donhang.css" />
   <script type="module" src="js/firebaseConfig.js"></script>
+  <script type="module" src="js/menu.js"></script>
+  <script type="module" src="js/donhang.js" defer></script>
 </head>
 <body>
   <div id="menu"></div>
 
   <main class="container">
-    <h1>📦 Quản lý đơn hàng</h1>
+    <h1>🧺 Tạo đơn hàng</h1>
 
-    <form id="formDonHang" class="form-card">
-      <input type="text" id="tenKhach" placeholder="Tên khách hàng" required />
-      <select id="chonSP" required>
-        <option value="">-- Chọn sản phẩm --</option>
-      </select>
-      <input type="number" id="soLuong" placeholder="Số lượng" min="1" required />
-      <select id="trangThai">
-        <option value="Chờ xử lý">Chờ xử lý</option>
-        <option value="Đang giao">Đang giao</option>
-        <option value="Hoàn thành">Hoàn thành</option>
-      </select>
-      <button type="submit">➕ Thêm đơn hàng</button>
-    </form>
+    <section class="card">
+      <div class="row">
+        <div class="col">
+          <label>Số điện thoại (khách)</label>
+          <input id="sdtKhach" placeholder="Nhập SĐT..." />
+        </div>
 
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Khách hàng</th>
-          <th>Sản phẩm</th>
-          <th>Số lượng</th>
-          <th>Tổng tiền</th>
-          <th>Trạng thái</th>
-          <th>Hành động</th>
-        </tr>
-      </thead>
-      <tbody id="listDonHang"></tbody>
-    </table>
+        <div class="col">
+          <label>Tên khách</label>
+          <input id="tenKhach" placeholder="Tên khách..." />
+        </div>
+
+        <div class="col small">
+          <label>Số lần mua</label>
+          <input id="soLanMua" readonly />
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="row align-start">
+        <div class="col-6">
+          <h3>Thêm sản phẩm</h3>
+          <div class="row">
+            <select id="chonSP"></select>
+            <input id="soLuong" type="number" min="0.1" step="0.1" value="1" />
+            <input id="donGia" readonly placeholder="Đơn giá" />
+            <button id="btnAddItem" class="btn primary">Thêm</button>
+          </div>
+
+          <table class="data-table" id="itemsTable">
+            <thead>
+              <tr><th>SP</th><th>Kg</th><th>Đơn giá</th><th>Thành tiền</th><th>Hành động</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="col-4">
+          <h3>Tổng & Thanh toán</h3>
+          <div class="summary-row"><span>Tổng tiền</span><span id="totalDisplay">0₫</span></div>
+          <div class="summary-row">
+            <span>Coupon</span>
+            <input id="coupon" placeholder="Nhập mã coupon..." />
+            <button id="btnApplyCoupon" class="btn">Áp dụng</button>
+          </div>
+          <div class="summary-row"><span>Giảm</span><span id="discountDisplay">0₫</span></div>
+          <div class="summary-row big"><span>Thanh toán</span><span id="finalDisplay">0₫</span></div>
+
+          <button id="btnCreateOrder" class="btn primary large">🧾 Tạo đơn (Đã giặt xong)</button>
+        </div>
+      </div>
+    </section>
   </main>
+
+  <!-- Modal thêm khách hàng -->
+  <div id="modalAddCustomer" class="modal">
+    <div class="modal-content">
+      <h2>➕ Thêm khách hàng mới</h2>
+      <form id="formAddCustomer" class="form-grid">
+        <div class="form-group"><label>Số điện thoại (UID)</label><input id="c_sdt" required pattern="[0-9]{9,11}"/></div>
+        <div class="form-group"><label>Họ tên</label><input id="c_hoTen" required/></div>
+        <div class="form-group"><label>Giới tính</label>
+          <select id="c_gioiTinh"><option>Nam</option><option>Nữ</option><option>Khác</option></select></div>
+        <div class="form-group"><label>Tỉnh/TP</label><input id="c_tinh" required/></div>
+        <div class="form-group"><label>Phường/Xã</label><input id="c_phuong" required/></div>
+        <div class="form-group full"><label>Tên đường/số nhà</label><input id="c_duong" required/></div>
+        <div class="form-group full"><label>Ghi chú</label><input id="c_ghiChu" /></div>
+
+        <div class="modal-actions">
+          <button type="submit" class="btn primary">💾 Lưu</button>
+          <button type="button" id="btnCancelAddCustomer" class="btn">❌ Hủy</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast container (will be appended) -->
 </body>
 </html>

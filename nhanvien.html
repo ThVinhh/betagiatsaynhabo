@@ -1,113 +1,162 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quản lý nhân viên</title>
-  <link rel="stylesheet" href="./css/style.css" />
-  <script type="module" src="js/menu.js"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>👥 Quản lý Nhân viên & Cửa hàng</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .left-tools { display: flex; gap: 12px; align-items: center; }
+
+    .btn-add {
+      background: #2196f3;
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-add.orange { background: #ff9800; }
+    .btn-add.gray { background: #6c757d; }
+    .btn-add:hover { opacity: 0.9; }
+
+    .search-area {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .search-area input {
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .data-table th, .data-table td {
+      padding: 10px 8px;
+      text-align: left;
+    }
+
+    .actions button {
+      margin-right: 6px;
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-edit { background: #ffc107; color: #111; }
+    .btn-toggle { background: #17a2b8; color: #fff; }
+
+    /* modal */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+
+    .modal-content {
+      background: #fff;
+      width: 720px;
+      max-width: 95%;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group.full { grid-column: 1 / -1; }
+
+    .modal-actions {
+      margin-top: 14px;
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .btn-save {
+      background: #007bff;
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-cancel {
+      background: #6c757d;
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+    }
+
+    @media (max-width:640px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .toolbar { flex-direction: column; align-items: stretch; gap: 10px; }
+    }
+  </style>
+
   <script type="module" src="js/firebaseConfig.js"></script>
+  <script type="module" src="js/menu.js"></script>
+  <script type="module" src="js/nhanvien.js"></script>
 </head>
 
 <body>
+  <div id="menu"></div>
 
-    <div id="menu"></div>
-  <main class="main-container">
-    <div class="nhanvien-container">
-      <!-- Nút mở popup thêm nhân viên -->
-<div class="toolbar">
-    <button id="btnOpenAddNV" class="btn-add">➕ Thêm nhân viên</button>
-  </div>
-  
-  <!-- Modal thêm nhân viên -->
-  <div id="addModal" class="modal">
-    <div class="modal-content">
-      <h2>➕ Thêm nhân viên mới</h2>
-      <form id="formNhanVien" class="form-edit">
-        <div class="form-grid">
-          <div class="form-group">
-            <label for="hoTen">Họ tên</label>
-            <input type="text" id="hoTen" name="hoTen" required />
-          </div>
-  
-          <div class="form-group">
-            <label for="sdt">Số điện thoại</label>
-            <input type="text" id="sdt" name="sdt" required pattern="[0-9]{9,11}" />
-          </div>
-  
-          <div class="form-group full">
-            <label>Địa chỉ</label>
-            <div class="address-row">
-              <input type="text" id="duong" name="duong" placeholder="Số nhà, tên đường" required />
-              <input type="text" id="phuong" name="phuong" placeholder="Phường / Xã" required />
-              <input type="text" id="tinh" name="tinh" placeholder="Tỉnh / TP" required />
-            </div>
-          </div>
-  
-          <div class="form-group">
-            <label>Giới tính</label>
-            <div class="gender-group">
-              <label><input type="radio" name="gioiTinh" value="Nam" required /> Nam</label>
-              <label><input type="radio" name="gioiTinh" value="Nữ" /> Nữ</label>
-              <label><input type="radio" name="gioiTinh" value="Khác" /> Khác</label>
-            </div>
-          </div>
-  
-          <div class="form-group">
-            <label for="quyen">Quyền</label>
-            <select id="quyen" name="quyen" required>
-              <option value="">-- Chọn quyền --</option>
-              <option value="admin">Admin</option>
-              <option value="quanly">Quản lý</option>
-              <option value="nhanvien">Nhân viên</option>
-            </select>
-          </div>
-  
-          <div class="form-group">
-            <label for="chucVu">Chức vụ</label>
-            <input type="text" id="chucVu" name="chucVu" placeholder="VD: Thu ngân" />
-          </div>
-  
-          <div class="form-group full">
-            <label for="ghiChu">Ghi chú</label>
-            <textarea id="ghiChu" name="ghiChu" rows="2" placeholder="Ghi chú thêm..."></textarea>
-          </div>
-        </div>
-  
-        <div class="modal-actions">
-          <button type="submit" class="btn-save">💾 Lưu</button>
-          <button type="button" id="cancelAdd" class="btn-cancel">❌ Hủy</button>
-        </div>
-      </form>
-    </div>
-  </div>
-  
+  <main class="container">
+    <h1>👥 Quản lý Nhân viên & Cửa hàng</h1>
 
-      <!-- Khu vực tìm kiếm -->
-      <section class="search-section">
-        <h2>🔍 Tìm nhân viên</h2>
-        <div style="display: flex; gap: 10px;">
-          <input type="text" id="searchInput" placeholder="Nhập tên hoặc SĐT..." />
-          <button id="btnSearch">🔎 Tìm</button>
-          <button id="btnClearSearch">❌ Xóa</button>
-          
-        </div>
-      </section>
-      
+    <div class="toolbar">
+      <div class="left-tools">
+        <button id="btnOpenAddNV" class="btn-add">➕ Thêm nhân viên</button>
+        <button id="btnOpenAddCH" class="btn-add orange">🏪 Thêm cửa hàng</button>
+        <button id="btnListCH" class="btn-add gray">📋 Danh sách cửa hàng</button>
+      </div>
+
+      <div class="search-area">
+        <input type="text" id="searchInput" placeholder="Tìm theo tên hoặc SĐT..." />
+        <button id="btnSearch" class="btn-save">Tìm</button>
+        <button id="btnClear" class="btn-cancel">Xóa</button>
+      </div>
     </div>
 
-    <h2 class="table-title">📋 Danh sách nhân viên</h2>
-    <table class="data-table">
+    <table class="data-table" style="width:100%; border-collapse:collapse;">
       <thead>
-        <tr>
-          <th>ID</th>
+        <tr style="background:#f4f6f8;">
+          <th>User</th>
           <th>Họ tên</th>
           <th>SĐT</th>
           <th>Địa chỉ</th>
           <th>Giới tính</th>
           <th>Quyền</th>
           <th>Chức vụ</th>
-          <th>Ghi chú</th>
+          <th>Tình trạng</th>
+          <th>Kho làm việc</th>
           <th>Hành động</th>
         </tr>
       </thead>
@@ -115,62 +164,119 @@
     </table>
   </main>
 
-  <!-- Modal chỉnh sửa nhân viên -->
-<div id="editModal" class="modal">
+  <!-- Modal thêm nhân viên -->
+  <div id="modalAddNV" class="modal">
     <div class="modal-content">
-      <h2>📝 Chỉnh sửa thông tin nhân viên</h2>
-      <form id="formEditNV" class="form-edit">
-        <input type="hidden" id="editUid" name="editUid" />
-  
+      <h2>➕ Thêm nhân viên</h2>
+      <form id="formNhanVien">
         <div class="form-grid">
-          <div class="form-group">
-            <label for="editHoTen">Họ tên</label>
-            <input type="text" id="editHoTen" name="editHoTen" required />
+          <div class="form-group"><label>Họ tên</label><input type="text" id="nvHoTen" required /></div>
+          <div class="form-group"><label>SĐT</label><input type="text" id="nvSdt" required /></div>
+          <div class="form-group full"><label>Địa chỉ</label><input type="text" id="nvDiaChi" required /></div>
+
+          <div class="form-group"><label>Giới tính</label>
+            <select id="nvGioiTinh">
+              <option value="">Chọn</option>
+              <option>Nam</option>
+              <option>Nữ</option>
+            </select>
           </div>
-  
-          <div class="form-group">
-            <label for="editSdt">Số điện thoại</label>
-            <input type="text" id="editSdt" name="editSdt" required />
-          </div>
-  
-          <div class="form-group full">
-            <label for="editDuong">Địa chỉ</label>
-            <div class="address-row">
-              <input type="text" id="editDuong" name="editDuong" placeholder="Số nhà, tên đường" required />
-              <input type="text" id="editPhuong" name="editPhuong" placeholder="Phường / Xã" required />
-              <input type="text" id="editTinh" name="editTinh" placeholder="Tỉnh / TP" required />
-            </div>
-          </div>
-  
-          <div class="form-group">
-            <label for="editQuyen">Quyền</label>
-            <select id="editQuyen" name="editQuyen" required>
+
+          <div class="form-group"><label>Quyền</label>
+            <select id="nvQuyen">
               <option value="admin">Admin</option>
               <option value="quanly">Quản lý</option>
               <option value="nhanvien">Nhân viên</option>
             </select>
           </div>
-  
+
+          <div class="form-group"><label>Chức vụ</label><input type="text" id="nvChucVu" /></div>
+
+          <div class="form-group"><label>Tình trạng</label>
+            <select id="nvTinhTrang">
+              <option value="active">Kích hoạt</option>
+              <option value="inactive">Ngừng hoạt động</option>
+            </select>
+          </div>
+
           <div class="form-group">
-            <label for="editChucVu">Chức vụ</label>
-            <input type="text" id="editChucVu" name="editChucVu" placeholder="VD: Thu ngân" />
+            <label for="nvKho">Kho làm việc:</label>
+            <select id="nvKho">
+              <option value="">-- Chọn kho làm việc --</option>
+            </select>
           </div>
-  
-          <div class="form-group full">
-            <label for="editGhiChu">Ghi chú</label>
-            <textarea id="editGhiChu" name="editGhiChu" rows="2" placeholder="Ghi chú thêm..."></textarea>
+          
+          <div class="form-group">
+            <label>
+              <input type="checkbox" id="nvQuyenKho" />
+              Cấp quyền quản lý kho
+            </label>
           </div>
+          
         </div>
-  
+
         <div class="modal-actions">
           <button type="submit" class="btn-save">💾 Lưu</button>
-          <button type="button" id="cancelEdit" class="btn-cancel">❌ Hủy</button>
+          <button type="button" id="btnCancelNV" class="btn-cancel">❌ Hủy</button>
         </div>
       </form>
     </div>
   </div>
-  
 
-  <script type="module" src="./js/nhanvien.js"></script>
+  <!-- Modal thêm cửa hàng -->
+  <div id="modalAddCH" class="modal">
+    <div class="modal-content">
+      <h2>🏪 Thêm cửa hàng mới</h2>
+      <form id="formCuaHang">
+        <div class="form-grid">
+          <div class="form-group full"><label>Tên cửa hàng</label><input type="text" id="chTen" required /></div>
+          <div class="form-group full"><label>Địa chỉ</label><input type="text" id="chDiaChi" required /></div>
+          <div class="form-group"><label>Trạng thái</label>
+            <select id="chTrangThai"><option value="active">Kích hoạt</option><option value="inactive">Tạm dừng</option></select>
+          </div>
+          <div class="form-group"><label>Quản lý cửa hàng</label>
+            <select id="chQuanLy" required><option value="">-- Chọn nhân viên quản lý --</option></select>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="submit" class="btn-save">💾 Lưu</button>
+          <button type="button" id="btnCancelCH" class="btn-cancel">❌ Hủy</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal danh sách cửa hàng -->
+  <div id="modalListCH" class="modal">
+    <div class="modal-content" style="width:900px; max-height:90vh; overflow:auto;">
+      <h2>📋 Danh sách cửa hàng</h2>
+
+      <div style="display:flex; gap:8px; margin-bottom:10px;">
+        <input type="text" id="searchCH" placeholder="Tìm theo tên hoặc quản lý..."
+          style="flex:1; padding:8px; border-radius:6px; border:1px solid #ccc;">
+        <button id="btnSearchCH" class="btn-save">Tìm</button>
+        <button id="btnClearCH" class="btn-cancel">Xóa</button>
+      </div>
+
+      <table style="width:100%; border-collapse:collapse;" class="data-table">
+        <thead>
+          <tr>
+            <th>Store ID</th>
+            <th>Tên kho</th>
+            <th>Địa chỉ</th>
+            <th>Quản lý</th>
+            <th>Trạng thái</th>
+            <th>Hành động</th>
+          </tr>
+        </thead>
+        <tbody id="listCuaHang"></tbody>
+        
+      </table>
+
+      <div class="modal-actions">
+        <button id="btnCloseCH" class="btn-cancel">❌ Đóng</button>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <title>Danh sách đơn hàng</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/donhang_ds.css" />
+  <script type="module" src="js/firebaseConfig.js"></script>
+  <script type="module" src="js/menu.js"></script>
+  <script type="module" src="js/donhang_ds.js" defer></script>
+
+</head>
+<body>
+  <div id="menu"></div>
+
+  <main class="container">
+    <h1>📦 Danh sách đơn hàng</h1>
+
+    <section class="toolbar-card">
+      <div class="left">
+        <select id="filterStatus">
+          <option value="">Tất cả trạng thái</option>
+          <option value="đã giặt xong">Đã giặt xong</option>
+          <option value="chờ giao">Chờ giao</option>
+          <option value="đã giao">Đã giao</option>
+        </select>
+
+        <input id="searchInput" placeholder="Tìm theo orderId hoặc SĐT..." />
+        <button id="btnSearch" class="btn search">Tìm</button>
+        <button id="btnClear" class="btn delete">Xóa</button>
+      </div>
+
+      <div class="right">
+        <button id="btnReload" class="btn primary">Tải lại</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <table class="data-table" id="ordersTable">
+        <thead>
+          <tr>
+            <th>OrderID</th>
+            <th>Khách</th>
+            <th>SĐT</th>
+            <th>Sản phẩm (tổng loại)</th>
+            <th>Tổng tiền</th>
+            <th>Thanh toán</th>
+            <th>Còn nợ</th>
+            <th>Trạng thái</th>
+            <th>Ngày tạo</th>
+            <th>Ngày giao</th>
+            <th>Hành động</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+
+  <!-- Modal chi tiết đơn -->
+  <div id="modalDetail" class="modal">
+    <div class="modal-content">
+      <h2>Chi tiết đơn <span id="detailOrderId"></span></h2>
+      <div id="detailBody">
+        <!-- thông tin sẽ điền bằng JS -->
+      </div>
+      <div class="modal-actions">
+        <button id="btnMarkDelivered" class="btn primary">Đánh dấu đã giao</button>
+        <button id="btnPrintInvoice" class="btn">In hóa đơn</button>
+        <button id="btnCloseDetail" class="btn">Đóng</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
